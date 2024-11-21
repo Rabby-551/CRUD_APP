@@ -1,6 +1,10 @@
+import 'dart:convert';
+
+import 'package:crud_app/models/product.dart';
 import 'package:crud_app/screens/add_new_product_screen.dart';
 import 'package:crud_app/screens/product_item.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 
 class ProductListScreen extends StatefulWidget {
   const ProductListScreen({super.key});
@@ -10,6 +14,15 @@ class ProductListScreen extends StatefulWidget {
 }
 
 class _ProductListScreenState extends State<ProductListScreen> {
+
+List<Product> productList = [];
+
+  @override
+  void initState() {
+    super.initState();
+    getProductList();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,9 +32,11 @@ class _ProductListScreenState extends State<ProductListScreen> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: ListView.separated(
-          itemCount: 20,
+          itemCount: productList.length,
           itemBuilder: (context, index) {
-            return const ProductItem();
+            return  ProductItem(
+              product: productList[index],
+            );
           },
           separatorBuilder: (context, index) {
             return const SizedBox(
@@ -44,5 +59,34 @@ class _ProductListScreenState extends State<ProductListScreen> {
         child: const Icon(Icons.add),
       ),
     );
+  }
+
+  //API Integration
+
+  Future<void> getProductList() async {
+    Uri uri = Uri.parse('https://crud.teamrabbil.com/api/v1/ReadProduct');
+    Response response = await get(uri);
+    // print(response);
+    // print(response.statusCode);
+    // print(response.body);
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> jsonResponse = jsonDecode(response.body.toString());
+      print(jsonResponse);
+      for (var item in jsonResponse['data']) {
+        Product product = Product(id:item[' _id'],
+            productName: item['ProductName'],
+            productCode: item['ProductCode'],
+            productImage: item[' Img'],
+            unitPrice: item[' UnitPrice'],
+            quantity:item['Qty'],
+            totalPrice: item['TotalPrice'],
+            createAt:item['CreatedDate']);
+        productList.add(product);
+      }
+      setState(() {
+
+      });
+    }
   }
 }
