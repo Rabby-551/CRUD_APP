@@ -16,6 +16,7 @@ class ProductListScreen extends StatefulWidget {
 class _ProductListScreenState extends State<ProductListScreen> {
 
 List<Product> productList = [];
+bool _inProgress = false;
 
   @override
   void initState() {
@@ -28,8 +29,15 @@ List<Product> productList = [];
     return Scaffold(
       appBar: AppBar(
         title: const Text('Product List'),
+        actions: [
+          IconButton(onPressed: (){
+            getProductList();
+          },icon:const Icon(Icons.refresh))
+        ],
       ),
-      body: Padding(
+      body:_inProgress ? const Center(
+        child: CircularProgressIndicator(),
+      ): Padding(
         padding: const EdgeInsets.all(16.0),
         child: ListView.separated(
           itemCount: productList.length,
@@ -64,6 +72,9 @@ List<Product> productList = [];
   //API Integration
 
   Future<void> getProductList() async {
+
+    _inProgress = true;
+    setState(() {});
     Uri uri = Uri.parse('https://crud.teamrabbil.com/api/v1/ReadProduct');
     Response response = await get(uri);
     // print(response);
@@ -71,6 +82,7 @@ List<Product> productList = [];
     // print(response.body);
 
     if (response.statusCode == 200) {
+      productList.clear();
       Map<String, dynamic> jsonResponse = jsonDecode(response.body.toString());
       print(jsonResponse);
       for (var item in jsonResponse['data']) {
@@ -84,9 +96,8 @@ List<Product> productList = [];
             createAt:item['CreatedDate']);
         productList.add(product);
       }
-      setState(() {
-
-      });
+      _inProgress=false;
+      setState(() {});
     }
   }
 }
