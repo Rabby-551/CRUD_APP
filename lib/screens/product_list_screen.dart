@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:crud_app/models/product.dart';
 import 'package:crud_app/screens/add_new_product_screen.dart';
-import 'package:crud_app/screens/product_item.dart';
+import 'package:crud_app/widgets/product_item.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 
@@ -14,9 +14,8 @@ class ProductListScreen extends StatefulWidget {
 }
 
 class _ProductListScreenState extends State<ProductListScreen> {
-
-List<Product> productList = [];
-bool _inProgress = false;
+  List<Product> productList = [];
+  bool _inProgress = false;
 
   @override
   void initState() {
@@ -30,29 +29,33 @@ bool _inProgress = false;
       appBar: AppBar(
         title: const Text('Product List'),
         actions: [
-          IconButton(onPressed: (){
-            getProductList();
-          },icon:const Icon(Icons.refresh))
+          IconButton(
+              onPressed: () {
+                getProductList();
+              },
+              icon: const Icon(Icons.refresh))
         ],
       ),
-      body:_inProgress ? const Center(
-        child: CircularProgressIndicator(),
-      ): Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: ListView.separated(
-          itemCount: productList.length,
-          itemBuilder: (context, index) {
-            return  ProductItem(
-              product: productList[index],
-            );
-          },
-          separatorBuilder: (context, index) {
-            return const SizedBox(
-              height: 16,
-            );
-          },
-        ),
-      ),
+      body: _inProgress
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: ListView.separated(
+                itemCount: productList.length,
+                itemBuilder: (context, index) {
+                  return ProductItem(
+                    product: productList[index],
+                  );
+                },
+                separatorBuilder: (context, index) {
+                  return const SizedBox(
+                    height: 16,
+                  );
+                },
+              ),
+            ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(
@@ -72,10 +75,10 @@ bool _inProgress = false;
   //API Integration
 
   Future<void> getProductList() async {
-
     _inProgress = true;
     setState(() {});
-    Uri uri = Uri.parse('https://crud.teamrabbil.com/api/v1/ReadProduct');
+
+    Uri uri = Uri.parse('http://164.68.107.70:6060/api/v1/ReadProduct');
     Response response = await get(uri);
     // print(response);
     // print(response.statusCode);
@@ -86,17 +89,19 @@ bool _inProgress = false;
       Map<String, dynamic> jsonResponse = jsonDecode(response.body.toString());
       print(jsonResponse);
       for (var item in jsonResponse['data']) {
-        Product product = Product(id:item[' _id'],
-            productName: item['ProductName'],
-            productCode: item['ProductCode'],
-            productImage: item[' Img'],
-            unitPrice: item[' UnitPrice'],
-            quantity:item['Qty'],
-            totalPrice: item['TotalPrice'],
-            createAt:item['CreatedDate']);
+        Product product = Product(
+          id: item['_id'],
+          productName: item['ProductName'] ?? '',
+          productCode: item['ProductCode'] ?? '',
+          productImage: item['Img'] ?? '',
+          unitPrice: item['UnitPrice'] ?? '',
+          quantity: item['Qty'] ?? '',
+          totalPrice: item['TotalPrice'] ?? '',
+          createAt: item['CreatedDate'] ?? '',
+        );
         productList.add(product);
       }
-      _inProgress=false;
+      _inProgress = false;
       setState(() {});
     }
   }

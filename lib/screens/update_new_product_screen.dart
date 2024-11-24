@@ -4,17 +4,16 @@ class UpdateProductScreen extends StatefulWidget {
   const UpdateProductScreen({super.key});
 
   @override
-  State<UpdateProductScreen> createState() => _AddNewProductScreenState();
+  State<UpdateProductScreen> createState() => _UpdateProductScreenState();
 }
 
-class _AddNewProductScreenState extends State<UpdateProductScreen> {
+class _UpdateProductScreenState extends State<UpdateProductScreen> {
   final TextEditingController _productNameTEController =
   TextEditingController();
   final TextEditingController _unitPriceTEController = TextEditingController();
   final TextEditingController _totalPriceTEController = TextEditingController();
   final TextEditingController _imageTEController = TextEditingController();
-  final TextEditingController _productCodeTEController =
-  TextEditingController();
+  final TextEditingController _codeTEController = TextEditingController();
   final TextEditingController _quantityTEController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -23,7 +22,6 @@ class _AddNewProductScreenState extends State<UpdateProductScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Update Product'),
-        centerTitle: true,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -40,74 +38,56 @@ class _AddNewProductScreenState extends State<UpdateProductScreen> {
           TextFormField(
             controller: _productNameTEController,
             decoration: const InputDecoration(
-              hintText: 'Name',
-              labelText: 'Product Name',
-            ),
+                hintText: 'Name', labelText: 'Product Name'),
           ),
           TextFormField(
             controller: _unitPriceTEController,
             decoration: const InputDecoration(
-              hintText: 'Price',
-              labelText: 'Unit Price',
-            ),
+                hintText: 'Unit Price', labelText: 'Unit Price'),
           ),
           TextFormField(
             controller: _totalPriceTEController,
             decoration: const InputDecoration(
-              hintText: 'Total Price',
-              labelText: 'Total Price',
-            ),
+                hintText: 'Total Price', labelText: 'Total Price'),
           ),
           TextFormField(
             controller: _imageTEController,
             decoration: const InputDecoration(
-              hintText: 'Image',
-              labelText: 'Product Image',
-            ),
+                hintText: 'Image', labelText: 'Product Image'),
           ),
           TextFormField(
-            controller: _productCodeTEController,
+            controller: _codeTEController,
             decoration: const InputDecoration(
-              hintText: 'Product Code',
-              labelText: 'Product Code',
-            ),
+                hintText: 'Product code', labelText: 'Product Code'),
           ),
           TextFormField(
             controller: _quantityTEController,
             decoration: const InputDecoration(
-              hintText: 'Quantity',
-              labelText: 'Product Quantity',
-            ),
+                hintText: 'Quantity', labelText: 'Quantity'),
           ),
-          const SizedBox(
-            height: 16,
-          ),
+          const SizedBox(height: 16),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.greenAccent,
               fixedSize: const Size.fromWidth(double.maxFinite),
             ),
-            onPressed: onTapAddProductButton,
+            onPressed: _onTapAddProductButton,
             child: const Text('UPDATE'),
-          ),
+          )
         ],
       ),
     );
   }
 
-  onTapAddProductButton(){
-    return;
-  }
-
+  void _onTapAddProductButton() {}
 
   @override
   void dispose() {
     _productNameTEController.dispose();
-    _unitPriceTEController.dispose();
-    _totalPriceTEController.dispose();
-    _imageTEController.dispose();
-    _productCodeTEController.dispose();
     _quantityTEController.dispose();
+    _totalPriceTEController.dispose();
+    _unitPriceTEController.dispose();
+    _imageTEController.dispose();
+    _codeTEController.dispose();
     super.dispose();
   }
 }
