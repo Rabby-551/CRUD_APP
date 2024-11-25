@@ -27,44 +27,36 @@ class _ProductListScreenState extends State<ProductListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Product List'),
+        title: const Text('Product list'),
         actions: [
-          IconButton(
-              onPressed: () {
-                getProductList();
-              },
-              icon: const Icon(Icons.refresh))
+          IconButton(onPressed: () {
+            getProductList();
+          }, icon: const Icon(Icons.refresh))
         ],
       ),
-      body: _inProgress
-          ? const Center(
-              child: CircularProgressIndicator(),
-            )
-          : Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: ListView.separated(
-                itemCount: productList.length,
-                itemBuilder: (context, index) {
-                  return ProductItem(
-                    product: productList[index],
-                  );
-                },
-                separatorBuilder: (context, index) {
-                  return const SizedBox(
-                    height: 16,
-                  );
-                },
-              ),
-            ),
+      body: _inProgress ? const Center(
+        child: CircularProgressIndicator(),
+      ) : Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: ListView.separated(
+          itemCount: productList.length,
+          itemBuilder: (context, index) {
+            return ProductItem(
+              product: productList[index],
+            );
+          },
+          separatorBuilder: (context, index) {
+            return const SizedBox(height: 16);
+          },
+        ),
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(
-              builder: (context) {
-                return const AddNewProductScreen();
-              },
-            ),
+            MaterialPageRoute(builder: (context) {
+              return const AddNewProductScreen();
+            }),
           );
         },
         child: const Icon(Icons.add),
@@ -72,25 +64,21 @@ class _ProductListScreenState extends State<ProductListScreen> {
     );
   }
 
-  //API Integration
-
   Future<void> getProductList() async {
     _inProgress = true;
     setState(() {});
-
+    print('Requesting');
     Uri uri = Uri.parse('http://164.68.107.70:6060/api/v1/ReadProduct');
     Response response = await get(uri);
-    // print(response);
-    // print(response.statusCode);
-    // print(response.body);
+    print(response);
+    print(response.statusCode);
+    print(response.body);
 
     if (response.statusCode == 200) {
       productList.clear();
-      Map<String, dynamic> jsonResponse = jsonDecode(response.body.toString());
-      print(jsonResponse);
+      Map<String, dynamic> jsonResponse = jsonDecode(response.body);
       for (var item in jsonResponse['data']) {
-        Product product = Product(
-          id: item['_id'],
+        Product product = Product(id: item['_id'],
           productName: item['ProductName'] ?? '',
           productCode: item['ProductCode'] ?? '',
           productImage: item['Img'] ?? '',
@@ -101,8 +89,9 @@ class _ProductListScreenState extends State<ProductListScreen> {
         );
         productList.add(product);
       }
-      _inProgress = false;
-      setState(() {});
     }
+
+    _inProgress = false;
+    setState(() {});
   }
 }
